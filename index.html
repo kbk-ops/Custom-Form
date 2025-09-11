@@ -169,30 +169,28 @@
 
     fetch("https://script.google.com/macros/s/AKfycbyxKxkFQBCgImtmjRAZAxEEEdyAzwgDHlDRvnq5f2-mKC0mZ3n9EXVvwig-UgNEVWsDGw/exec", {
       method: "POST",
-      body: JSON.stringify(payload),
-      headers: { "Content-Type": "application/json" }
-    })
-    .then(r => r.json())
-    .then(res => {
-      if (res && res.success) {
-        document.body.innerHTML = `
-          <h1 style="text-align:center; margin-top:100px;">
-            Your Details has been recorded to Kasangga ng Batang Kankaloo Database.<br>
-            Please give us 10 - 15 minutes while we are validation your details.<br>
-            Check your email after 20 mins for the soft copy of your <Strong>KBK ID and Membership Form</Strong>
-          </h1>
-        `;
-      } else {
-        messageEl.textContent = res.message || "Submission failed. Please try again.";
-      }
-    })
-    .catch(err => {
-      messageEl.textContent = "Submission error: " + err.message;
-    });
-  };
-  reader.readAsDataURL(file);
+  body: JSON.stringify(payload),
+  headers: { "Content-Type": "application/json" }
+})
+.then(r => r.json())
+.then(res => {
+  if (res && res.success) {
+    document.body.innerHTML = `
+      <h1 style="text-align:center; margin-top:100px;">
+        Your Details has been recorded to Kasangga ng Batang Kankaloo Database.<br>
+        Please give us 10 - 15 minutes while we are validation your details.<br>
+        Check your email after 20 mins for the soft copy of your <Strong>KBK ID and Membership Form</Strong>
+      </h1>
+    `;
+  } else {
+    messageEl.textContent = res.message || "Submission failed. Please try again.";
+  }
+})
+.catch(err => {
+  messageEl.textContent = "Submission error: " + err.message;
 });
   </script>
 </body>
 </html>
+
 
