@@ -119,8 +119,7 @@
     </div>
 
     <div class="message" id="message"></div>
-    <input type="file" id="picture" accept="image/*" onchange="previewImage(event)">
-  <img id="preview" style="display:none;max-width:200px;margin-top:10px;">
+    <img id="preview" alt="Preview">
   </form>
 
   <script>
@@ -140,42 +139,51 @@
       reader.readAsDataURL(file);
     });
 
-    form.addEventListener("submit", function(e){
-  e.preventDefault();
-
-  const formData = new FormData(form);
-  const payload = Object.fromEntries(formData.entries());
-});
-
-        fetch("https://script.google.com/macros/s/AKfycbx_nImoHYbo0N6IHNXVmxLOqjrhsGOAqpADve64t7Qe8CeFi7XajKRtJjb_JwvzSRC2Dw/exec", {
-    method: "POST",
-    body: JSON.stringify(payload),
-    headers: { "Content-Type": "application/json" }
-  })
-  .then(r => r.json())
-  .then(res => {
-    if (res && res.success) {
-      document.body.innerHTML = `
-        <h1 style="text-align:center; margin-top:100px;">
-          Your Details has been recorded to Kasangga ng Batang Kankaloo Database.<br>
-          Please give us 10 - 15 minutes while we are validating your details.<br>
-          Check your email after 20 mins for the soft copy of your <strong>KBK ID and Membership Form</strong>.
-        </h1>
-      `;
-    } else {
-      messageEl.textContent = res && res.message ? res.message : "Submission failed. Please try again.";
-    }
-  })
-  .catch(err => {
-    messageEl.textContent = "Submission error: " + err;
-  });
-
-    function previewImage(event) {
-  const output = document.getElementById("preview");
-  output.src = URL.createObjectURL(event.target.files[0]);
-  output.style.display = "block";
-}
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      messageEl.textContent = "Submitting Please Wait...";
+      const file = pictureInput.files[0];
+      if (!file) { messageEl.textContent = "Please attach a picture."; return; }
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const dataUrl = evt.target.result;
+        const payload = {
+          firstName: document.getElementById("firstName").value,
+          middleName: document.getElementById("middleName").value,
+          lastName: document.getElementById("lastName").value,
+          Suffix: document.getElementById("Suffix").value,
+          dob: document.getElementById("dob").value,
+          gender: document.getElementById("gender").value,
+          phone: document.getElementById("phone").value,
+          email: document.getElementById("email").value,
+          houseNo: document.getElementById("houseNo").value,
+          addr1: document.getElementById("addr1").value,
+          addr2: document.getElementById("addr2").value,
+          city: document.getElementById("city").value,
+          barangay: document.getElementById("barangay").value,
+          position: document.getElementById("position").value,
+          referrer: document.getElementById("referrer").value,
+          precinct: document.getElementById("precinct").value,
+          pictureDataUrl: dataUrl
+        };
+        google.script.run.withSuccessHandler(function(res) {
+  if (res && res.success) {
+    document.body.innerHTML = `
+      <h1 style="text-align:center; margin-top:100px;">
+        Your Details has been recorded to Kasangga ng Batang Kankaloo Database.<br>
+        Please give us 10 - 15 minutes while we are validation your details.<br>
+        Check your email after 20 mins for the soft copy of your <Strong>KBK ID and Membership Form</Strong>
+      </h1>
+    `;
+  } else {
+    messageEl.textContent = res && res.message ? res.message : "Submission failed. Please try again.";
+  }
+}).withFailureHandler(function(err) {
+  messageEl.textContent = "Submission error: " + (err && err.message ? err.message : err);
+}).submitForm(payload);
+      };
+      reader.readAsDataURL(file);
+    });
   </script>
 </body>
 </html>
-
