@@ -8,29 +8,23 @@
 <script>
   const form = document.getElementById('myForm');
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', function (e) {
     e.preventDefault();
 
-    const data = {
-      name: form.name.value,
-      email: form.email.value,
-      message: form.message.value,
-    };
+    const formData = new FormData(form);
 
     fetch('https://script.google.com/macros/s/AKfycbw2Q0PDVz5fHMeOkumq4QPYtR8Ah7TYj4MyTsO4Ly0wycaiRW9POKGUuwBoF-fGIl5-/exec', {
       method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify(data),
-})
-      .then((res) => res.json())
-      .then((response) => {
-        alert('Form submitted successfully!');
-        form.reset();
-      })
-      .catch((error) => {
-        console.error('Error!', error.message);
-      });
+      body: formData, // send as form data instead of JSON
+    })
+    .then(response => response.text())
+    .then(result => {
+      alert('Form submitted successfully!');
+      form.reset();
+    })
+    .catch(error => {
+      console.error('Error!', error.message);
+      alert('There was an error submitting the form.');
+    });
   });
 </script>
