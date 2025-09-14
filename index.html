@@ -473,12 +473,12 @@
     };
 
     // Replace with your actual deployed Web App URL
-   const scriptURL = "https://script.google.com/macros/s/AKfycbxzPtCyO4kboZY3ZdHmbsb9FuUXZfrLCWJg6LDs3W6zMN64Wk4ItX3We1kFKXsmsPi5/exec";
+   const scriptURL = "https://script.google.com/macros/s/AKfycbwXf27MOY2aWJaNWnWD9UkVJ_ETDUTfqbZaBnorn0Ki-rzf9G5AF2uSaHQRRSa2NE7V/exec";
 
 fetch(scriptURL, {
   method: 'POST',
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'text/plain;charset=UTF-8'
   },
   body: JSON.stringify(payload)
 })
@@ -513,6 +513,7 @@ fetch(scriptURL, {
   </script>
 </body>
 </html>
+
 
 
 
