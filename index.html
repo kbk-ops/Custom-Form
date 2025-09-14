@@ -470,6 +470,11 @@
           precinct: document.getElementById("precinct").value,
           pictureDataUrl: dataUrl
         };
+
+		fetch('https://script.google.com/macros/s/AKfycbw2Q0PDVz5fHMeOkumq4QPYtR8Ah7TYj4MyTsO4Ly0wycaiRW9POKGUuwBoF-fGIl5-/exec', {
+      method: 'POST',
+      body: formData, // send as form data instead of JSON
+    })
         google.script.run.withSuccessHandler(function(res) {
   if (res && res.success) {
     document.body.innerHTML = `
@@ -498,3 +503,4 @@
   </script>
 </body>
 </html>
+
