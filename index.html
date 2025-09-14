@@ -477,39 +477,36 @@
 
 fetch(scriptURL, {
   method: 'POST',
+  body: JSON.stringify(payload),
   headers: {
-    'Content-Type': 'text/plain;charset=UTF-8'
-  },
-  body: JSON.stringify(payload)
+    'Content-Type': 'application/json'
+  }
 })
-     google.script.run.withSuccessHandler(function(res) {
+.then(response => response.json())
+.then(res => {
   if (res && res.success) {
     document.body.innerHTML = `
       <h1 style="text-align:center; margin-top:100px;">
-        Your Details has been recorded to Kasangga ng Batang Kankaloo Database.<br>
-        Please allow us to validate your details and make sure your email address is correct.<br>
-        Check your registered e-mail address within the day for the<br>
-        soft copy of your <Strong>KBK ID and Membership Form</Strong>
+        Your Details have been recorded.<br>
+        Please check your email for confirmation.
       </h1>
     `;
   } else {
-    messageEl.textContent = res && res.message ? res.message : "Submission failed. Please try again.";
+    messageEl.textContent = res.message || "Submission failed. Please try again.";
     submitBtn.disabled = false;
     submitBtn.style.opacity = "1";
     submitBtn.style.pointerEvents = "auto";
   }
-}).withFailureHandler(function(err) {
-  messageEl.textContent = "Submission error: " + (err && err.message ? err.message : err);
+})
+.catch(error => {
+  messageEl.textContent = "Submission error: " + error.message;
   submitBtn.disabled = false;
-        submitBtn.style.opacity = "1";
-        submitBtn.style.pointerEvents = "auto";
-}).submitForm(payload);
-      };
-      reader.readAsDataURL(file);
-    });
-  </script>
+  submitBtn.style.opacity = "1";
+  submitBtn.style.pointerEvents = "auto";
+});
 </body>
 </html>
+
 
 
 
