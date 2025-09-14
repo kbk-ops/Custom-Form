@@ -378,7 +378,7 @@
 
     <div class="form-group">
       <label>Please take 1x1 Selfie *</label><button onclick="showModal()">Show Instructions</button>
-      <input type="file" id="picture" name="picture" accept="image/*" capture="environment">
+      <input type="file" id="picture" name="picture" accept="image/*" capture="environment" required>
     </div>
 
     <div class="btn-container">
@@ -470,32 +470,24 @@
           precinct: document.getElementById("precinct").value,
           pictureDataUrl: dataUrl
         };
-
-		fetch("https://script.google.com/macros/s/AKfycbxPccAlxfRGAzzd7Pax0hpKcwInDaactlQ3_5OED-EuDpI3BpikoBEfMf5EucczuzB2Tg/exec", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify(payload)
-})
-.then(res => res.json())
-.then(response => {
-  if (response.success) {
+        google.script.run.withSuccessHandler(function(res) {
+  if (res && res.success) {
     document.body.innerHTML = `
       <h1 style="text-align:center; margin-top:100px;">
-        Your details have been recorded.<br>Please check your email for confirmation.
+        Your Details has been recorded to Kasangga ng Batang Kankaloo Database.<br>
+        Please allow us to validate your details and make sure your email address is correct.<br>
+        Check your registered e-mail address within the day for the<br>
+        soft copy of your <Strong>KBK ID and Membership Form</Strong>
       </h1>
     `;
   } else {
-    messageEl.textContent = response.message || "Something went wrong.";
-    resetSubmitButton();
+    messageEl.textContent = res && res.message ? res.message : "Submission failed. Please try again.";
     submitBtn.disabled = false;
     submitBtn.style.opacity = "1";
     submitBtn.style.pointerEvents = "auto";
   }
-}).catch(error => {
-  messageEl.textContent = "Submission error: " + error.message;
-  resetSubmitButton();
+}).withFailureHandler(function(err) {
+  messageEl.textContent = "Submission error: " + (err && err.message ? err.message : err);
   submitBtn.disabled = false;
         submitBtn.style.opacity = "1";
         submitBtn.style.pointerEvents = "auto";
@@ -506,7 +498,3 @@
   </script>
 </body>
 </html>
-
-
-
-
