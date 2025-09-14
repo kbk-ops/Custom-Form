@@ -482,37 +482,35 @@ fetch(scriptURL, {
   },
   body: JSON.stringify(payload)
 })
-    .then(response => response.json())
-    .then(res => {
-      if (res.success) {
-        document.body.innerHTML = `
-          <h1 style="text-align:center; margin-top:100px;">
-            Your Details have been recorded to Kasangga ng Batang Kankaloo Database.<br>
-            Please allow us to validate your details and make sure your email address is correct.<br>
-            Check your registered email within the day for the<br>
-            soft copy of your <strong>KBK ID and Membership Form</strong>
-          </h1>
-        `;
-      } else {
-        messageEl.textContent = res.message || "Submission failed. Please try again.";
-        submitBtn.disabled = false;
+     google.script.run.withSuccessHandler(function(res) {
+  if (res && res.success) {
+    document.body.innerHTML = `
+      <h1 style="text-align:center; margin-top:100px;">
+        Your Details has been recorded to Kasangga ng Batang Kankaloo Database.<br>
+        Please allow us to validate your details and make sure your email address is correct.<br>
+        Check your registered e-mail address within the day for the<br>
+        soft copy of your <Strong>KBK ID and Membership Form</Strong>
+      </h1>
+    `;
+  } else {
+    messageEl.textContent = res && res.message ? res.message : "Submission failed. Please try again.";
+    submitBtn.disabled = false;
+    submitBtn.style.opacity = "1";
+    submitBtn.style.pointerEvents = "auto";
+  }
+}).withFailureHandler(function(err) {
+  messageEl.textContent = "Submission error: " + (err && err.message ? err.message : err);
+  submitBtn.disabled = false;
         submitBtn.style.opacity = "1";
         submitBtn.style.pointerEvents = "auto";
-      }
-    })
-    .catch(error => {
-      messageEl.textContent = "Submission error: " + error.message;
-      submitBtn.disabled = false;
-      submitBtn.style.opacity = "1";
-      submitBtn.style.pointerEvents = "auto";
+}).submitForm(payload);
+      };
+      reader.readAsDataURL(file);
     });
-  };
-
-  reader.readAsDataURL(file);
-});
   </script>
 </body>
 </html>
+
 
 
 
