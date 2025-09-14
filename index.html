@@ -473,15 +473,15 @@
     };
 
     // Replace with your actual deployed Web App URL
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbw2Q0PDVz5fHMeOkumq4QPYtR8Ah7TYj4MyTsO4Ly0wycaiRW9POKGUuwBoF-fGIl5-/exec';
+   const scriptURL = "https://script.google.com/macros/s/AKfycbwzleKWJniSP-lZpariODDN3LfTn3nQUa39QzZn9RF6PzsbuMNcAK_hylavkkNyFQ2U/exec";
 
-    fetch(scriptURL, {
-      method: 'POST',
-      body: JSON.stringify(payload),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
+fetch(scriptURL, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(payload)
+})
     .then(response => response.json())
     .then(res => {
       if (res.success) {
@@ -513,5 +513,6 @@
   </script>
 </body>
 </html>
+
 
 
