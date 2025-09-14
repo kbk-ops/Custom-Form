@@ -399,122 +399,80 @@
 </div>
   </form>
   <script>
-    const form = document.getElementById("kbkForm");
-    const preview = document.getElementById("preview");
-    const messageEl = document.getElementById("message");
-    const pictureInput = document.getElementById("picture");
-
-    pictureInput.addEventListener("change", function(e) {
-      const file = e.target.files[0];
-      if (!file) { preview.style.display = "none"; return; }
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        preview.src = evt.target.result;
-        preview.style.display = "block";
-      };
-      reader.readAsDataURL(file);
-    });
-    
-    function showModal() {
-    document.getElementById("instructionModal").style.display = "block";
-  }
-
-  function closeModal() {
-    document.getElementById("instructionModal").style.display = "none";
-  }
-
-  // Close modal if user clicks outside the modal box
-  window.onclick = function(event) {
-    const modal = document.getElementById("instructionModal");
-    if (event.target === modal) {
-      modal.style.display = "none";
-    }
-  }
-
-    form.addEventListener("submit", function(e) {
-  e.preventDefault();
-  
+  const form = document.getElementById("kbkForm");
   const submitBtn = document.getElementById("submitBtn");
-  submitBtn.disabled = true;
-  submitBtn.style.opacity = "0.6";
-  submitBtn.style.pointerEvents = "none";
-  messageEl.textContent = "Submitting Please Wait...";
+  const pictureInput = document.getElementById("picture");
+  const messageEl = document.getElementById("message");
 
-  const file = pictureInput.files[0];
-  if (!file) {
-    messageEl.textContent = "Please attach a picture."; 
-    submitBtn.disabled = false;
-    submitBtn.style.opacity = "1";
-    submitBtn.style.pointerEvents = "auto";
-    return;
-  }
+  const scriptURL = 'https://script.google.com/macros/s/PASTE_YOUR_DEPLOYED_URL_HERE/exec';
 
-  const reader = new FileReader();
-  reader.onload = function(evt) {
-    const dataUrl = evt.target.result;
-    const payload = {
-      firstName: document.getElementById("firstName").value,
-      middleName: document.getElementById("middleName").value,
-      lastName: document.getElementById("lastName").value,
-      Suffix: document.getElementById("Suffix").value,
-      dob: document.getElementById("dob").value,
-      gender: document.getElementById("gender").value,
-      phone: document.getElementById("phone").value,
-      email: document.getElementById("email").value,
-      houseNo: document.getElementById("houseNo").value,
-      addr1: document.getElementById("addr1").value,
-      addr2: document.getElementById("addr2").value,
-      city: document.getElementById("city").value,
-      barangay: document.getElementById("barangay").value,
-      position: document.getElementById("position").value,
-      referrer: document.getElementById("referrer").value,
-      precinct: document.getElementById("precinct").value,
-      pictureDataUrl: dataUrl
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = "0.6";
+    messageEl.textContent = "Submitting, please wait...";
+
+    const file = pictureInput.files[0];
+    if (!file) {
+      messageEl.textContent = "Please attach a picture.";
+      submitBtn.disabled = false;
+      submitBtn.style.opacity = "1";
+      return;
+    }
+
+    // Read image as base64
+    const reader = new FileReader();
+    reader.onload = async function (evt) {
+      const dataUrl = evt.target.result;
+
+      const formData = new FormData();
+      formData.append("firstName", document.getElementById("firstName").value);
+      formData.append("middleName", document.getElementById("middleName").value);
+      formData.append("lastName", document.getElementById("lastName").value);
+      formData.append("Suffix", document.getElementById("Suffix").value);
+      formData.append("dob", document.getElementById("dob").value);
+      formData.append("gender", document.getElementById("gender").value);
+      formData.append("phone", document.getElementById("phone").value);
+      formData.append("email", document.getElementById("email").value);
+      formData.append("houseNo", document.getElementById("houseNo").value);
+      formData.append("addr1", document.getElementById("addr1").value);
+      formData.append("addr2", document.getElementById("addr2").value);
+      formData.append("city", document.getElementById("city").value);
+      formData.append("barangay", document.getElementById("barangay").value);
+      formData.append("position", document.getElementById("position").value);
+      formData.append("referrer", document.getElementById("referrer").value);
+      formData.append("precinct", document.getElementById("precinct").value);
+      formData.append("pictureDataUrl", dataUrl); // base64 image
+
+      try {
+        const response = await fetch(scriptURL, {
+          method: "POST",
+          body: formData // Let browser set the correct Content-Type for multipart/form-data
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          document.body.innerHTML = `
+            <h1 style="text-align:center; margin-top:100px;">
+              Your Details have been recorded.<br>
+              Please check your email for confirmation.
+            </h1>
+          `;
+        } else {
+          messageEl.textContent = result.message || "Submission failed. Please try again.";
+          submitBtn.disabled = false;
+          submitBtn.style.opacity = "1";
+        }
+      } catch (error) {
+        messageEl.textContent = "Submission error: " + error.message;
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = "1";
+      }
     };
 
-    // Replace with your actual deployed Web App URL
-   const scriptURL = "https://script.google.com/macros/s/AKfycbwXf27MOY2aWJaNWnWD9UkVJ_ETDUTfqbZaBnorn0Ki-rzf9G5AF2uSaHQRRSa2NE7V/exec";
-
-fetch(scriptURL, {
-  method: 'POST',
-  body: JSON.stringify(payload),
-  headers: {
-    'Content-Type': 'application/json'
-  }
-})
-.then(response => response.json())
-.then(res => {
-  if (res && res.success) {
-    document.body.innerHTML = `
-      <h1 style="text-align:center; margin-top:100px;">
-        Your Details have been recorded.<br>
-        Please check your email for confirmation.
-      </h1>
-    `;
-  } else {
-    messageEl.textContent = res.message || "Submission failed. Please try again.";
-    submitBtn.disabled = false;
-    submitBtn.style.opacity = "1";
-    submitBtn.style.pointerEvents = "auto";
-  }
-})
-.catch(error => {
-  messageEl.textContent = "Submission error: " + error.message;
-  submitBtn.disabled = false;
-  submitBtn.style.opacity = "1";
-  submitBtn.style.pointerEvents = "auto";
-});
-	  </script>
+    reader.readAsDataURL(file);
+  });
+</script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
