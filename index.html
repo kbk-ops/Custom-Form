@@ -472,10 +472,14 @@
         };
 
 		fetch('https://script.google.com/macros/s/AKfycbyo02pr0ZzIyXim27r8sUfzXN0H1CUXGFQazMbXPRrEOMmheW5jB6zJNIrP5is0oXyY_g/exec', {
-      method: 'POST',
-      body: formData, // send as form data instead of JSON
-    })
-        google.script.run.withSuccessHandler(function(res) {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(payload),
+})
+.then(res => res.json())
+.then(res => {
   if (res && res.success) {
     document.body.innerHTML = `
       <h1 style="text-align:center; margin-top:100px;">
@@ -503,3 +507,4 @@
   </script>
 </body>
 </html>
+
