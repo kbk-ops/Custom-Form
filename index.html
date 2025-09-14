@@ -404,6 +404,33 @@
   const pictureInput = document.getElementById("picture");
   const messageEl = document.getElementById("message");
 
+pictureInput.addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (!file) { preview.style.display = "none"; return; }
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        preview.src = evt.target.result;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    });
+    
+    function showModal() {
+    document.getElementById("instructionModal").style.display = "block";
+  }
+
+  function closeModal() {
+    document.getElementById("instructionModal").style.display = "none";
+  }
+
+  // Close modal if user clicks outside the modal box
+  window.onclick = function(event) {
+    const modal = document.getElementById("instructionModal");
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  }  
+
   const scriptURL = 'https://script.google.com/macros/s/AKfycbzTG23gdpDLoC2VwiO8NfNN-8sUag7tkBDt-NqiTAachC5uVHJmStbErX3t9-N15gZ0/exec';
 
   form.addEventListener("submit", async function (e) {
@@ -476,4 +503,5 @@
 </script>
 </body>
 </html>
+
 
