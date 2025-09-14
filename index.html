@@ -471,32 +471,31 @@
           pictureDataUrl: dataUrl
         };
 
-		fetch('https://script.google.com/macros/s/AKfycbyo02pr0ZzIyXim27r8sUfzXN0H1CUXGFQazMbXPRrEOMmheW5jB6zJNIrP5is0oXyY_g/exec', {
-  method: 'POST',
+		fetch("https://script.google.com/macros/s/AKfycbyo02pr0ZzIyXim27r8sUfzXN0H1CUXGFQazMbXPRrEOMmheW5jB6zJNIrP5is0oXyY_g/exec", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json'
+    "Content-Type": "application/json"
   },
-  body: JSON.stringify(payload),
+  body: JSON.stringify(payload)
 })
-.then(response => response.json())
-.then(res => {
-  if (res && res.success) {
+.then(res => res.json())
+.then(response => {
+  if (response.success) {
     document.body.innerHTML = `
       <h1 style="text-align:center; margin-top:100px;">
-        Your Details has been recorded to Kasangga ng Batang Kankaloo Database.<br>
-        Please allow us to validate your details and make sure your email address is correct.<br>
-        Check your registered e-mail address within the day for the<br>
-        soft copy of your <Strong>KBK ID and Membership Form</Strong>
+        Your details have been recorded.<br>Please check your email for confirmation.
       </h1>
     `;
   } else {
-    messageEl.textContent = res && res.message ? res.message : "Submission failed. Please try again.";
+    messageEl.textContent = response.message || "Something went wrong.";
+    resetSubmitButton();
     submitBtn.disabled = false;
     submitBtn.style.opacity = "1";
     submitBtn.style.pointerEvents = "auto";
   }
-}).withFailureHandler(function(err) {
-  messageEl.textContent = "Submission error: " + (err && err.message ? err.message : err);
+}).catch(error => {
+  messageEl.textContent = "Submission error: " + error.message;
+  resetSubmitButton();
   submitBtn.disabled = false;
         submitBtn.style.opacity = "1";
         submitBtn.style.pointerEvents = "auto";
@@ -507,5 +506,6 @@
   </script>
 </body>
 </html>
+
 
 
