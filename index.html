@@ -429,7 +429,7 @@ pictureInput.addEventListener("change", function(e) {
     }
   }  
 
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbzUazg3F57KAvszg-0ctDaTfrgT0O2M3F5d16f1B4ssMXSElO_gxYj7NlEX6o721kTA/exec';
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbydiWNzirb7m7Zprn1d__0Hj0ijkwG2z6tg3_MJOlmlFAPsU6VQ8YPslhtz2fURkNh2/exec';
 
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
@@ -473,8 +473,11 @@ pictureInput.addEventListener("change", function(e) {
       try {
         const response = await fetch(scriptURL, {
           method: "POST",
-          body: formData // Let browser set the correct Content-Type for multipart/form-data
-        });
+		  headers: {
+          "Content-Type": "application/json", // ✅ Important!
+        },
+          body: JSON.stringify(payload),
+      });
 
         const result = await response.json();
         if (result.success) {
@@ -502,12 +505,5 @@ pictureInput.addEventListener("change", function(e) {
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
 
 
