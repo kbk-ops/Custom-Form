@@ -432,78 +432,85 @@ pictureInput.addEventListener("change", function(e) {
   const scriptURL = 'https://script.google.com/macros/s/AKfycbydiWNzirb7m7Zprn1d__0Hj0ijkwG2z6tg3_MJOlmlFAPsU6VQ8YPslhtz2fURkNh2/exec';
 
   form.addEventListener("submit", async function (e) {
-    e.preventDefault();
+  e.preventDefault();
 
-    submitBtn.disabled = true;
-    submitBtn.style.opacity = "0.6";
-    messageEl.textContent = "Submitting, please wait...";
+  submitBtn.disabled = true;
+  submitBtn.style.opacity = "0.6";
+  messageEl.textContent = "Submitting, please wait...";
 
-    const file = pictureInput.files[0];
-    if (!file) {
-      messageEl.textContent = "Please attach a picture.";
-      submitBtn.disabled = false;
-      submitBtn.style.opacity = "1";
-      return;
-    }
+  const file = pictureInput.files[0];
+  if (!file) {
+    messageEl.textContent = "Please attach a picture.";
+    submitBtn.disabled = false;
+    submitBtn.style.opacity = "1";
+    return;
+  }
 
-    // Read image as base64
-    const reader = new FileReader();
-    reader.onload = async function (evt) {
-      const dataUrl = evt.target.result;
+  const reader = new FileReader();
+  reader.onload = async function (evt) {
+    const dataUrl = evt.target.result;
 
-      const formData = new FormData();
-      formData.append("firstName", document.getElementById("firstName").value);
-      formData.append("middleName", document.getElementById("middleName").value);
-      formData.append("lastName", document.getElementById("lastName").value);
-      formData.append("Suffix", document.getElementById("Suffix").value);
-      formData.append("dob", document.getElementById("dob").value);
-      formData.append("gender", document.getElementById("gender").value);
-      formData.append("phone", document.getElementById("phone").value);
-      formData.append("email", document.getElementById("email").value);
-      formData.append("houseNo", document.getElementById("houseNo").value);
-      formData.append("addr1", document.getElementById("addr1").value);
-      formData.append("addr2", document.getElementById("addr2").value);
-      formData.append("city", document.getElementById("city").value);
-      formData.append("barangay", document.getElementById("barangay").value);
-      formData.append("position", document.getElementById("position").value);
-      formData.append("referrer", document.getElementById("referrer").value);
-      formData.append("precinct", document.getElementById("precinct").value);
-      formData.append("pictureDataUrl", dataUrl); // base64 image
+    // ✅ Build FormData first
+    const formData = new FormData();
+    formData.append("firstName", document.getElementById("firstName").value);
+    formData.append("middleName", document.getElementById("middleName").value);
+    formData.append("lastName", document.getElementById("lastName").value);
+    formData.append("Suffix", document.getElementById("Suffix").value);
+    formData.append("dob", document.getElementById("dob").value);
+    formData.append("gender", document.getElementById("gender").value);
+    formData.append("phone", document.getElementById("phone").value);
+    formData.append("email", document.getElementById("email").value);
+    formData.append("houseNo", document.getElementById("houseNo").value);
+    formData.append("addr1", document.getElementById("addr1").value);
+    formData.append("addr2", document.getElementById("addr2").value);
+    formData.append("city", document.getElementById("city").value);
+    formData.append("barangay", document.getElementById("barangay").value);
+    formData.append("position", document.getElementById("position").value);
+    formData.append("referrer", document.getElementById("referrer").value);
+    formData.append("precinct", document.getElementById("precinct").value);
+    formData.append("pictureDataUrl", dataUrl);
 
-      try {
-        const response = await fetch(scriptURL, {
-          method: "POST",
-		  headers: {
-          "Content-Type": "application/json", // ✅ Important!
+    // ✅ Convert FormData to payload object
+    const payload = {};
+    formData.forEach((value, key) => {
+      payload[key] = value;
+    });
+
+    try {
+      const response = await fetch(scriptURL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-          body: JSON.stringify(payload),
+        body: JSON.stringify(payload),
       });
 
-        const result = await response.json();
-        if (result.success) {
-          document.body.innerHTML = `
-            <h1 style="text-align:center; margin-top:100px;">
-              Your Details has been recorded to Kasangga ng Batang Kankaloo Databse.<br>
-              Please allow us to validate your details.<br>
-			  expect an email within the day for confirmation.
-            </h1>
-          `;
-        } else {
-          messageEl.textContent = result.message || "Submission failed. Please try again.";
-          submitBtn.disabled = false;
-          submitBtn.style.opacity = "1";
-        }
-      } catch (error) {
-        messageEl.textContent = "Submission error: " + error.message;
+      const result = await response.json();
+      if (result.success) {
+        document.body.innerHTML = `
+          <h1 style="text-align:center; margin-top:100px;">
+            Your Details have been recorded to Kasangga ng Batang Kankaloo Database.<br>
+            Please allow us to validate your details.<br>
+            Expect an email within the day for confirmation.
+          </h1>
+        `;
+      } else {
+        messageEl.textContent = result.message || "Submission failed. Please try again.";
         submitBtn.disabled = false;
         submitBtn.style.opacity = "1";
       }
-    };
+    } catch (error) {
+      messageEl.textContent = "Submission error: " + error.message;
+      submitBtn.disabled = false;
+      submitBtn.style.opacity = "1";
+    }
+  };
 
-    reader.readAsDataURL(file);
-  });
+  reader.readAsDataURL(file);
+});
 </script>
 </body>
 </html>
+
 
 
