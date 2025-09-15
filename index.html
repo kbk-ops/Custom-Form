@@ -301,6 +301,8 @@
         <option>Sr.</option>
         <option>Jr.</option>
         <option>III</option>
+        <option>IV</option>
+        <option>V</option>
       </select>
     </div>
 
@@ -397,12 +399,12 @@
 </div>
   </form>
   <script>
-  const form = document.getElementById("kbkForm");
-  const submitBtn = document.getElementById("submitBtn");
-  const pictureInput = document.getElementById("picture");
-  const messageEl = document.getElementById("message");
+    const form = document.getElementById("kbkForm");
+    const preview = document.getElementById("preview");
+    const messageEl = document.getElementById("message");
+    const pictureInput = document.getElementById("picture");
 
-pictureInput.addEventListener("change", function(e) {
+    pictureInput.addEventListener("change", function(e) {
       const file = e.target.files[0];
       if (!file) { preview.style.display = "none"; return; }
       const reader = new FileReader();
@@ -427,90 +429,79 @@ pictureInput.addEventListener("change", function(e) {
     if (event.target === modal) {
       modal.style.display = "none";
     }
-  }  
-
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbydiWNzirb7m7Zprn1d__0Hj0ijkwG2z6tg3_MJOlmlFAPsU6VQ8YPslhtz2fURkNh2/exec';
-
-  form.addEventListener("submit", async function (e) {
-  e.preventDefault();
-
-  submitBtn.disabled = true;
-  submitBtn.style.opacity = "0.6";
-  messageEl.textContent = "Submitting, please wait...";
-
-  const file = pictureInput.files[0];
-  if (!file) {
-    messageEl.textContent = "Please attach a picture.";
-    submitBtn.disabled = false;
-    submitBtn.style.opacity = "1";
-    return;
   }
 
-  const reader = new FileReader();
-  reader.onload = async function (evt) {
-    const dataUrl = evt.target.result;
-
-    // ✅ Build FormData first
-    const formData = new FormData();
-    formData.append("firstName", document.getElementById("firstName").value);
-    formData.append("middleName", document.getElementById("middleName").value);
-    formData.append("lastName", document.getElementById("lastName").value);
-    formData.append("Suffix", document.getElementById("Suffix").value);
-    formData.append("dob", document.getElementById("dob").value);
-    formData.append("gender", document.getElementById("gender").value);
-    formData.append("phone", document.getElementById("phone").value);
-    formData.append("email", document.getElementById("email").value);
-    formData.append("houseNo", document.getElementById("houseNo").value);
-    formData.append("addr1", document.getElementById("addr1").value);
-    formData.append("addr2", document.getElementById("addr2").value);
-    formData.append("city", document.getElementById("city").value);
-    formData.append("barangay", document.getElementById("barangay").value);
-    formData.append("position", document.getElementById("position").value);
-    formData.append("referrer", document.getElementById("referrer").value);
-    formData.append("precinct", document.getElementById("precinct").value);
-    formData.append("pictureDataUrl", dataUrl);
-
-    // ✅ Convert FormData to payload object
-    const payload = {};
-    formData.forEach((value, key) => {
-      payload[key] = value;
-    });
-
-    try {
-      const response = await fetch(scriptURL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const result = await response.json();
-      if (result.success) {
-        document.body.innerHTML = `
-          <h1 style="text-align:center; margin-top:100px;">
-            Your Details have been recorded to Kasangga ng Batang Kankaloo Database.<br>
-            Please allow us to validate your details.<br>
-            Expect an email within the day for confirmation.
-          </h1>
-        `;
-      } else {
-        messageEl.textContent = result.message || "Submission failed. Please try again.";
-        submitBtn.disabled = false;
-        submitBtn.style.opacity = "1";
-      }
-    } catch (error) {
-      messageEl.textContent = "Submission error: " + error.message;
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById("submitBtn");
+  	  submitBtn.disabled = true;
+  	  submitBtn.style.opacity = "0.6"; // optional: visual greying out
+  	  submitBtn.style.pointerEvents = "none";
+  
+      messageEl.textContent = "Submitting Please Wait...";
+      
+      const file = pictureInput.files[0];
+      if (!file) { messageEl.textContent = "Please attach a picture."; 
       submitBtn.disabled = false;
       submitBtn.style.opacity = "1";
+      submitBtn.style.pointerEvents = "auto";
+      return; }
+      
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const dataUrl = evt.target.result;
+        const payload = {
+          firstName: document.getElementById("firstName").value,
+          middleName: document.getElementById("middleName").value,
+          lastName: document.getElementById("lastName").value,
+          Suffix: document.getElementById("Suffix").value,
+          dob: document.getElementById("dob").value,
+          gender: document.getElementById("gender").value,
+          phone: document.getElementById("phone").value,
+          email: document.getElementById("email").value,
+          houseNo: document.getElementById("houseNo").value,
+          addr1: document.getElementById("addr1").value,
+          addr2: document.getElementById("addr2").value,
+          city: document.getElementById("city").value,
+          barangay: document.getElementById("barangay").value,
+          position: document.getElementById("position").value,
+          referrer: document.getElementById("referrer").value,
+          precinct: document.getElementById("precinct").value,
+          pictureDataUrl: dataUrl
+        };
+        fetch("https://script.google.com/macros/s/AKfycbwiAfzvrh_contMwawcX6k3PtVrmx_ATmRhrgr7V3etTyHpSwPn40l--FOnhV9h2trK/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(payload),
+})
+  .then((response) => response.json())
+  .then((res) => {
+    if (res && res.success) {
+      document.body.innerHTML = `
+        <h1 style="text-align:center; margin-top:100px;">
+          Your Details have been recorded to Kasangga ng Batang Kankaloo Database.<br>
+          Please allow us to validate your details and make sure your email address is correct.<br>
+          Check your registered e-mail address within the day for the<br>
+          soft copy of your <Strong>KBK ID and Membership Form</Strong>
+        </h1>
+      `;
+    } else {
+      messageEl.textContent = res && res.message ? res.message : "Submission failed. Please try again.";
+      submitBtn.disabled = false;
+      submitBtn.style.opacity = "1";
+      submitBtn.style.pointerEvents = "auto";
     }
-  };
-
-  reader.readAsDataURL(file);
-});
-</script>
+  })
+  .catch((err) => {
+    console.error("Error submitting form:", err);
+    messageEl.textContent = "Submission error. Please try again later.";
+    submitBtn.disabled = false;
+    submitBtn.style.opacity = "1";
+    submitBtn.style.pointerEvents = "auto";
+  });
+  </script>
 </body>
 </html>
-
-
-
