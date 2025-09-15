@@ -334,7 +334,7 @@
 
     <div class="form-hbl">
       <label>House No. / Blk, Lot</label>
-      <input type="text" id="houseNo" name="houseNo" pattern="^(\d{1,5}[A-Za-z]?|blk.*|lot.*)?$" placeholder="House No., Blk & Lot only" title="Please put your house number only or blk and lot if no house number leave it blank">
+      <input type="text" id="houseNo" name="houseNo" pattern="^(\d{1,5}[A-Za-z]?|(?i:blk|block|lot).+)?$" placeholder="House No., Blk & Lot only" title="Please put your house number only or blk and lot if no house number leave it blank">
     </div>
 
     <div class="form-add1">
@@ -503,5 +503,6 @@ pictureInput.addEventListener("change", function(e) {
 </script>
 </body>
 </html>
+
 
 
