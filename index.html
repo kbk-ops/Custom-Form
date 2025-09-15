@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Responsive 2-Column Form</title>
+  <title>Responsive Form with Camera Capture</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -12,7 +12,7 @@
     }
 
     form {
-      max-width: 600px;
+      max-width: 700px;
       margin: 0 auto;
       background: white;
       padding: 20px;
@@ -30,7 +30,12 @@
       flex: 1 1 50%;
       padding: 0 10px;
       box-sizing: border-box;
-      min-width: 200px; /* prevents from getting too small */
+      min-width: 220px;
+    }
+
+    .form-group.full-width {
+      flex: 1 1 100%;
+      padding: 0 10px;
     }
 
     .form-group label {
@@ -54,11 +59,12 @@
     @media (max-width: 600px) {
       .form-group {
         flex: 1 1 100%;
-        padding: 0;
+        padding: 0 0 15px 0;
       }
     }
 
-    button {
+    button,
+    input[type="submit"] {
       background-color: #007bff;
       color: white;
       border: none;
@@ -70,8 +76,31 @@
       width: 100%;
     }
 
-    button:hover {
+    button:hover,
+    input[type="submit"]:hover {
       background-color: #0056b3;
+    }
+
+    /* Style file input as button */
+    .camera-button {
+      display: inline-block;
+      width: 100%;
+      padding: 12px 20px;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: none;
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .camera-button:hover {
+      background-color: #1e7e34;
+    }
+    /* Hide the real file input */
+    input[type="file"] {
+      display: none;
     }
   </style>
 </head>
@@ -83,47 +112,85 @@
         <input type="text" id="firstName" name="firstName" required />
       </div>
       <div class="form-group">
+        <label for="middleName">Middle Name</label>
+        <input type="text" id="middleName" name="middleName" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
         <label for="lastName">Last Name</label>
         <input type="text" id="lastName" name="lastName" required />
       </div>
+      <div class="form-group">
+        <label for="birthday">Birthday</label>
+        <input type="date" id="birthday" name="birthday" required />
+      </div>
     </div>
 
     <div class="form-row">
       <div class="form-group">
-        <label for="email">Email</label>
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" required />
+      </div>
+      <div class="form-group">
+        <label for="email">E-mail Address</label>
         <input type="email" id="email" name="email" required />
       </div>
+    </div>
+
+    <div class="form-row full-width">
+      <h3>Complete Address</h3>
+    </div>
+
+    <div class="form-row">
       <div class="form-group">
-        <label for="phone">Phone</label>
-        <input type="tel" id="phone" name="phone" />
+        <label for="houseNo">House No. / Blk / Lot</label>
+        <input type="text" id="houseNo" name="houseNo" />
+      </div>
+      <div class="form-group">
+        <label for="address1">Address Line 1</label>
+        <input type="text" id="address1" name="address1" />
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-group">
-        <label for="country">Country</label>
-        <select id="country" name="country" required>
-          <option value="">Select a country</option>
-          <option>United States</option>
-          <option>Canada</option>
-          <option>United Kingdom</option>
-          <option>Australia</option>
-        </select>
+        <label for="address2">Address Line 2</label>
+        <input type="text" id="address2" name="address2" />
       </div>
       <div class="form-group">
+        <label for="barangay">Barangay</label>
+        <input type="text" id="barangay" name="barangay" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group full-width">
         <label for="city">City</label>
         <input type="text" id="city" name="city" />
       </div>
     </div>
 
     <div class="form-row">
-      <div class="form-group" style="flex: 1 1 100%; padding: 0;">
-        <label for="message">Message</label>
-        <textarea id="message" name="message" rows="4" placeholder="Your message here..."></textarea>
+      <div class="form-group">
+        <label for="precinctNumber">Precinct Number</label>
+        <input type="text" id="precinctNumber" name="precinctNumber" />
+      </div>
+      <div class="form-group">
+        <label for="referrer">Referrer</label>
+        <input type="text" id="referrer" name="referrer" />
       </div>
     </div>
 
-    <button type="submit">Submit</button>
+    <!-- Camera capture -->
+    <div class="form-row full-width">
+      <label for="cameraInput">Take a picture</label>
+      <label for="cameraInput" class="camera-button">Open Camera</label>
+      <input type="file" accept="image/*" capture="environment" id="cameraInput" name="cameraInput" />
+    </div>
+
+    <input type="submit" value="Submit" />
   </form>
 </body>
 </html>
