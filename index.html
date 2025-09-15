@@ -6,9 +6,6 @@
   <title>KBK Membership Form</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style> 
-	  :root{
-		--max-form-width: 1000px;
-	  }
     body {
       background-color: lightgreen; 
       font-family: Arial, sans-serif; 
@@ -304,8 +301,6 @@
         <option>Sr.</option>
         <option>Jr.</option>
         <option>III</option>
-        <option>IV</option>
-        <option>V</option>
       </select>
     </div>
 
@@ -337,7 +332,7 @@
 
     <div class="form-hbl">
       <label>House No. / Blk, Lot</label>
-      <input type="text" id="houseNo" name="houseNo" pattern="^(\d{1,5}[A-Za-z]?|(?i:blk|block|lot).+)?$" placeholder="House No., Blk & Lot only" title="Please put your house number only or blk and lot if no house number leave it blank">
+      <input type="text" id="houseNo" name="houseNo" pattern="^(\d{1,5}[A-Za-z]?|blk.*|lot.*)?$" placeholder="House No., Blk & Lot only" title="Please put your house number only or blk and lot if no house number leave it blank">
     </div>
 
     <div class="form-add1">
@@ -473,40 +468,31 @@
           precinct: document.getElementById("precinct").value,
           pictureDataUrl: dataUrl
         };
-        fetch("https://script.google.com/macros/s/AKfycbx1e3bfSDhYHkxq172izWwnhZGfN9-PEOYXhwKQnI8Ws5RILWk4LWupkPh1QXWS75YS/exec", {
+       const scriptURL = "https://script.google.com/macros/s/AKfycby0CnwIPeWQc1TgWpaAKtXQTCT_oaxsMZPiRC49mRN5boE_s5BSCDHvjF2cTZ_mpTJv/exec";
+
+fetch(scriptURL, {
   method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
   body: JSON.stringify(payload),
+  headers: {
+    "Content-Type": "application/json"
+  }
 })
-  .then((response) => response.json())
-  .then((res) => {
-    if (res && res.success) {
-      document.body.innerHTML = `
-        <h1 style="text-align:center; margin-top:100px;">
-          Your Details have been recorded to Kasangga ng Batang Kankaloo Database.<br>
-          Please allow us to validate your details and make sure your email address is correct.<br>
-          Check your registered e-mail address within the day for the<br>
-          soft copy of your <Strong>KBK ID and Membership Form</Strong>
-        </h1>
-      `;
-    } else {
-      messageEl.textContent = res && res.message ? res.message : "Submission failed. Please try again.";
-      submitBtn.disabled = false;
-      submitBtn.style.opacity = "1";
-      submitBtn.style.pointerEvents = "auto";
-    }
-  })
-  .catch((err) => {
-    console.error("Error submitting form:", err);
-    messageEl.textContent = "Submission error. Please try again later.";
-    submitBtn.disabled = false;
-    submitBtn.style.opacity = "1";
-    submitBtn.style.pointerEvents = "auto";
-  });
+.then(res => res.json())
+.then(res => {
+  if (res.success) {
+    document.body.innerHTML = `<h1 style="text-align:center; margin-top:100px;">
+      Your Details have been recorded...
+    </h1>`;
+  } else {
+    messageEl.textContent = res.message || "Submission failed.";
+    enableSubmitBtn();
+  }
+})
+.catch(err => {
+  messageEl.textContent = "Network error: " + err.message;
+  enableSubmitBtn();
+});
+
   </script>
 </body>
 </html>
-
-
